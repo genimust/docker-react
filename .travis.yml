@@ -5,3 +5,20 @@ services:
 
 before_install:
   - docker build -t genimust/docker-react -f Dockerfile.dev .
+
+script:
+  - docker run -e CI=true genimust/docker-react npm run test
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-west-2"
+  app: "docker"                    --- Name provided after all PAplication in AWS
+  env:  "Docker-env"
+  bucket_name: "elasticbeanstalk-us-west-2-587487544"   --- make search in s3 and search for the name based on the region
+  bucket_path: "docker"                
+  on:
+    branch: master
+
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: 
+    secure: "$AWS_SECRET_KEY"
